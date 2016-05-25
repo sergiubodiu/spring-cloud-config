@@ -16,6 +16,7 @@ import org.springframework.util.MultiValueMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ConfigServerApplication.class)
@@ -32,6 +33,15 @@ public class ConfigServerApplicationTests {
         ResponseEntity<Map> entity = new TestRestTemplate().getForEntity(
                 "http://localhost:" + port + "/app/cloud", Map.class);
         assertEquals(HttpStatus.OK, entity.getStatusCode());
+    }
+
+    @Test
+    public void gitCommitAvailable() {
+        @SuppressWarnings("rawtypes")
+        ResponseEntity<Map> entity = new TestRestTemplate().getForEntity(
+                "http://localhost:" + port + "/admin/info", Map.class);
+        assertEquals(HttpStatus.OK, entity.getStatusCode());
+        assertTrue(entity.getBody().containsKey("git"));
     }
 
     @Test

@@ -67,7 +67,6 @@
 				<groupId>pl.project13.maven</groupId>
 				<artifactId>git-commit-id-plugin</artifactId>
 				<configuration>
-					<dotGitDirectory>../../../../.git</dotGitDirectory>
 					<failOnNoGitDirectory>false</failOnNoGitDirectory>
 				</configuration>
 			</plugin>

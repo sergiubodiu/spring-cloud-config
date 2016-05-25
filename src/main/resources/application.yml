@@ -14,13 +14,23 @@ eureka:
     leaseRenewalIntervalInSeconds: 10
     statusPageUrlPath: /admin/info
     healthCheckUrlPath: /admin/health
+info:
+  build:
+    artifact: @project.artifactId@
+    name: @project.name@
+    description: @project.description@
+    version: @project.version@
 
 spring:
+  security:
+    user:
+      password: pivotal
   cloud:
     config:
       server:
         git:
           uri: ${HOME}/Workspace/spring-boot-config
+
 ---
 spring:
   profiles: cloud

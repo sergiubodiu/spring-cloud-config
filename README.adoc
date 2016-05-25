@@ -1,0 +1,93 @@
+# spring-cloud-config
+Spring Cloud Config Server 
+
+== Configuration endpoints
+
+|===
+| Path | Description 
+
+| /{app}/{profile}
+| Configuration data for app in Spring profile (comma-separated).
+
+| /{app}/{profile}/{label}
+| Add a git label 
+
+| /{app}/{profiels}{label}/{path}
+| An environment-specific plain text config file (at "path") 
+|===
+
+. Try out the following actuator endpoints.
++
+/admin/autoconfig:: Dumps all of the auto-configuration performed as part of application bootstrapping.
+/admin/beans:: Dumps all of the beans in the Spring context.
+/admin/configprops:: Displays a collated list of all `@ConfigurationProperties`.
+/admin/dump:: Performs a thread dump.
+/admin/env:: Dumps the application's shell environment as well as all Java system properties.
+/admin/mappings:: Dumps all URI request mappings and the controller methods to which they are mapped.
+/admin/metrics:: Exposes several automatically collected metrics for your application.
+/admin/trace:: Displays trace information (by default the last few HTTP requests).
+
+== Security
+
+The server is not secure by default. You can add HTTP Basic
+authentication by including an extra dependency on Spring Security
+(e.g. via `spring-boot-starter-security`). The user name is "user" 
+Boot approach), e.g.
++
+----
+management:
+  context-path: /admin
+----
+
+Generate keystore
++
+----
+keytool -genkeypair -keystore config.jks -storepass s3cr3t -alias config \
+    -keyalg RSA -keysize 2048 -validity 1000 -keypass s3cr3t \
+    -dname "CN=*.local.pcfdev.io,OU=Spring team,O=Pivotal,L=Singapore,S=Singapore,C=SG" -ext SAN=dns:localhost 
+----        
+Make changes to bootstrap.yml
++
+----
+ encrypt:
+   failOnError: false
+   keyStore:
+     location: classpath:config.jks
+     password: s3cr3t
+     alias: config
+----    
+  
+== Build and Version Control Info
+
+Spring Boot provides an endpoint (http://localhost:8080/info) that allows the exposure of arbitrary metadata.
+
+One thing that it does well is expose information about the specific build and version control coordinates for a given deployment.
+
+. Add the following plugin to your Maven build.
+It will add Git branch and commit coordinates to the `/info` endpoint:
++
+----
+<plugin>
+	<groupId>pl.project13.maven</groupId>
+	<artifactId>git-commit-id-plugin</artifactId>
+    <configuration>
+        <failOnNoGitDirectory>false</failOnNoGitDirectory>
+    </configuration>
+</plugin>
+----
+
+. Add the following properties to `src/main/resources/application.yml`:
++
+----
+info:
+  build:
+    artifact: @project.artifactId@
+    name: @project.name@
+    description: @project.description@
+    version: @project.version@
+----
++
+These will add the project's Maven coordinates to the `/admin/info` endpoint.
+The Spring Boot Maven plugin will cause them to automatically be replaced in the assembled JAR.
+
+      
