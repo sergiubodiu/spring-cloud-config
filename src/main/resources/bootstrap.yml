@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: config-server
+encrypt:
+  failOnError: false
+  keyStore:
+    location: classpath:config.jks
+    password: s3cr3t
+    alias: config
